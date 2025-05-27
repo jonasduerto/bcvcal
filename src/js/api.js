@@ -5,39 +5,73 @@
 const API_URL = 'https://pydolarve.org/api/v1/dollar?page=bcv&monitor=usd';
 
 /**
- * Fetches the current BCV dollar rate
- * @returns {Promise<Object>} The rate data object
+ * Fetches the current BCV (Banco Central de Venezuela) dollar exchange rate data from the pydolarve API.
+ * The function constructs an object containing the current rate, previous rate, date of the data,
+ * the change amount, and the percentage change.
+ * @async
+ * @function fetchBCVRate
+ * @returns {Promise<object>} A promise that resolves to an object with rate data:
+ *  - `currentRate` {number}: The current exchange rate.
+ *  - `previousRate` {number}: The previous day's exchange rate.
+ *  - `date` {string}: ISO string representing the date of the fetched data (from API or current if not provided).
+ *  - `change` {number}: The absolute difference between current and previous rates.
+ *  - `changePercentage` {number}: The percentage difference between current and previous rates.
+ * @throws {Error} If the network request fails, the API returns a non-OK status, or if parsing the response fails.
+ *                 The error object will contain a message detailing the issue.
+ * @sideEffects Outputs an error message to the console if an error occurs.
  */
 export async function fetchBCVRate() {
   try {
     const response = await fetch(API_URL);
     
     if (!response.ok) {
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
     }
     
     const data = await response.json();
+    
+    // Validate essential data presence
+    if (data.price === undefined || data.price_old === undefined) {
+        throw new Error('API response missing essential price data.');
+    }
+
+    const currentPrice = parseFloat(data.price);
+    const previousPrice = parseFloat(data.price_old);
+
+    if (isNaN(currentPrice) || isNaN(previousPrice)) {
+        throw new Error('Invalid number format for price data in API response.');
+    }
+
     return {
-      currentRate: parseFloat(data.price),
-      previousRate: parseFloat(data.price_old),
-      date: data.fetch_date || new Date().toISOString(),
-      change: parseFloat(data.price) - parseFloat(data.price_old),
-      changePercentage: ((parseFloat(data.price) - parseFloat(data.price_old)) / parseFloat(data.price_old)) * 100
+      currentRate: currentPrice,
+      previousRate: previousPrice,
+      date: data.fetch_date || new Date().toISOString(), // Fallback to current date if API doesn't provide one
+      change: currentPrice - previousPrice,
+      changePercentage: previousPrice !== 0 ? ((currentPrice - previousPrice) / previousPrice) * 100 : 0 // Avoid division by zero
     };
   } catch (error) {
-    console.error('Error fetching rate:', error);
-    throw error;
+    console.error('Error fetching BCV rate:', error);
+    throw error; // Re-throw the error so it can be caught by the caller
   }
 }
 
 /**
- * Formats a date string into a human-readable format
- * @param {string} dateString - ISO date string
- * @returns {string} Formatted date string
+ * Formats an ISO date string into a human-readable string.
+ * Displays as "Today at HH:MM AM/PM" if the date is today,
+ * otherwise as "MM/DD/YYYY at HH:MM AM/PM".
+ * @function formatDate
+ * @param {string} dateString - The ISO date string to format.
+ * @returns {string} The formatted date string, or the original string if formatting fails, or 'Unknown date' if input is falsy.
+ * @sideEffects Outputs an error message to the console if formatting fails.
  */
 export function formatDate(dateString) {
+  if (!dateString) return 'Unknown date';
   try {
     const date = new Date(dateString);
+    // Check if date is valid
+    if (isNaN(date.getTime())) {
+        throw new Error('Invalid dateString provided.');
+    }
     
     // Format: Today at HH:MM AM/PM or MM/DD/YYYY at HH:MM AM/PM
     const now = new Date();
@@ -55,24 +89,32 @@ export function formatDate(dateString) {
     }
   } catch (error) {
     console.error('Error formatting date:', error);
-    return dateString || 'Unknown date';
+    return dateString; // Return original string on error
   }
 }
 
 /**
- * Calculate the time difference from now in a human readable format
- * @param {string} dateString - ISO date string
- * @returns {string} Human readable time difference
+ * Calculates the time difference between a given ISO date string and the current time,
+ * and returns it in a human-readable format (e.g., "5 secs ago", "10 mins ago", "2 hours ago", "3 days ago").
+ * @function getTimeDifference
+ * @param {string} dateString - The ISO date string from which to calculate the time difference.
+ * @returns {string} A string representing the time difference, or "Recently" if formatting fails or input is invalid.
+ * @sideEffects Outputs an error message to the console if an error occurs.
  */
 export function getTimeDifference(dateString) {
+  if (!dateString) return 'Recently';
   try {
     const date = new Date(dateString);
+    if (isNaN(date.getTime())) {
+        throw new Error('Invalid dateString provided.');
+    }
     const now = new Date();
     const diffMs = now - date;
     
     // Convert to seconds
     const diffSecs = Math.floor(diffMs / 1000);
     
+    if (diffSecs < 0) return 'In the future'; // Handle dates in the future
     if (diffSecs < 60) {
       return `${diffSecs} sec${diffSecs !== 1 ? 's' : ''} ago`;
     }
@@ -97,6 +139,6 @@ export function getTimeDifference(dateString) {
     
   } catch (error) {
     console.error('Error calculating time difference:', error);
-    return 'Recently';
+    return 'Recently'; // Fallback value
   }
 }

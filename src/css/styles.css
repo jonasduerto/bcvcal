@@ -44,25 +44,25 @@ body {
   font-family: var(--font-sans);
   background-color: var(--neutral-50);
   color: var(--neutral-800);
-  padding: 16px;
+  padding: 12px; /* Reduced body padding */
   overflow-x: hidden;
 }
 
 .container {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px; /* Reduced gap */
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; Removed, relying on container gap */
 }
 
 .header h1 {
-  font-size: 1.25rem;
+  font-size: 1.15rem; /* Slightly reduced font size */
   font-weight: 600;
   color: var(--primary);
 }
@@ -73,16 +73,39 @@ body {
   gap: 8px;
 }
 
-.last-updated {
-  font-size: 0.75rem;
+.refresh-btn {
+  background: none;
+  border: none;
   color: var(--neutral-500);
-  margin-top: 4px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.refresh-btn:hover {
+  color: var(--primary);
+  background-color: var(--neutral-100);
+}
+
+.refresh-btn svg {
+  width: 18px; /* Consistent with HTML */
+  height: 18px; /* Consistent with HTML */
+}
+
+.last-updated {
+  font-size: 0.7rem; /* Reduced font size */
+  color: var(--neutral-500);
+  margin-top: 2px; /* Reduced margin */
 }
 
 .rate-card {
   background-color: white;
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 12px; /* Reduced padding */
   box-shadow: var(--shadow);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
@@ -96,11 +119,11 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 8px; /* Reduced margin */
 }
 
 .rate-title {
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Reduced font size */
   font-weight: 500;
   color: var(--neutral-600);
 }
@@ -108,7 +131,7 @@ body {
 .rate-change {
   display: flex;
   align-items: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
   font-weight: 500;
   gap: 4px;
 }
@@ -122,29 +145,29 @@ body {
 }
 
 .rate-value {
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.6rem; /* Slightly increased for emphasis */
+  font-weight: 700; /* Maintained for emphasis */
   color: var(--primary);
-  margin-bottom: 8px;
+  margin-bottom: 4px; /* Reduced margin */
 }
 
 .previous-rate {
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
   color: var(--neutral-500);
 }
 
 .calculator-card {
   background-color: white;
   border-radius: var(--radius);
-  padding: 16px;
+  padding: 12px; /* Reduced padding */
   box-shadow: var(--shadow);
 }
 
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px; /* Reduced gap */
+  margin-bottom: 12px; /* Reduced margin */
   transition: all 0.3s ease;
 }
 
@@ -156,7 +179,7 @@ body {
 }
 
 .input-label {
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Reduced font size */
   font-weight: 500;
   color: var(--neutral-700);
 }
@@ -169,12 +192,12 @@ body {
 
 .input-wrapper input {
   width: 100%;
-  padding: 12px 16px;
-  padding-left: 32px;
-  padding-right: 44px;
+  padding: 10px 14px; /* Reduced padding */
+  padding-left: 30px; /* Adjusted for symbol */
+  padding-right: 40px; /* Adjusted for button */
   border: 1px solid var(--neutral-300);
   border-radius: var(--radius-sm);
-  font-size: 1rem;
+  font-size: 0.9rem; /* Reduced font size */
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
   color: var(--neutral-800);
 }
@@ -187,23 +210,23 @@ body {
 
 .input-wrapper .currency-symbol {
   position: absolute;
-  left: 12px;
+  left: 10px; /* Adjusted position */
   top: 50%;
   transform: translateY(-50%);
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Reduced font size */
   color: var(--neutral-500);
 }
 
 .input-wrapper .convert-btn {
   position: absolute;
-  right: 8px;
+  right: 6px; /* Adjusted position */
   top: 50%;
   transform: translateY(-50%);
   background: var(--primary);
   color: white;
   border: none;
-  width: 32px;
-  height: 32px;
+  width: 30px; /* Reduced size */
+  height: 30px; /* Reduced size */
   border-radius: var(--radius-sm);
   cursor: pointer;
   display: flex;
@@ -221,8 +244,8 @@ body {
 }
 
 .swap-btn {
-  width: 40px;
-  height: 40px;
+  width: 36px; /* Reduced size */
+  height: 36px; /* Reduced size */
   border-radius: 50%;
   background-color: var(--neutral-100);
   border: 1px solid var(--neutral-200);
@@ -232,7 +255,7 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   align-self: center;
-  margin: -8px 0;
+  margin: -6px 0; /* Adjusted margin */
   position: relative;
   z-index: 2;
 }
@@ -249,11 +272,11 @@ body {
   background-color: var(--primary-dark);
   color: white;
   border-radius: var(--radius);
-  padding: 16px;
-  margin-top: 16px;
+  padding: 12px; /* Reduced padding */
+  margin-top: 12px; /* Reduced margin */
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px; /* Reduced gap */
   position: relative;
   overflow: hidden;
 }
@@ -275,12 +298,12 @@ body {
 }
 
 .result-label {
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
   color: rgba(255, 255, 255, 0.7);
 }
 
 .result-value {
-  font-size: 1.25rem;
+  font-size: 1.1rem; /* Reduced font size */
   font-weight: 600;
   display: flex;
   justify-content: space-between;
@@ -292,6 +315,7 @@ body {
   border: none;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
+  padding: 4px; /* Added padding for easier click */
   transition: color 0.2s ease;
 }
 
@@ -300,28 +324,29 @@ body {
 }
 
 .history-section {
-  margin-top: 16px;
+  margin-top: 12px; /* Reduced margin */
 }
 
 .history-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 6px; /* Reduced margin */
 }
 
 .history-title {
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Reduced font size */
   font-weight: 500;
   color: var(--neutral-700);
 }
 
 .clear-btn {
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
   color: var(--neutral-500);
   background: none;
   border: none;
   cursor: pointer;
+  padding: 4px; /* Added padding for easier click */
   transition: color 0.2s ease;
 }
 
@@ -332,8 +357,8 @@ body {
 .history-list {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  max-height: 120px;
+  gap: 6px; /* Reduced gap */
+  max-height: 100px; /* Reduced max height */
   overflow-y: auto;
 }
 
@@ -341,10 +366,10 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px;
+  padding: 6px; /* Reduced padding */
   background-color: var(--neutral-100);
   border-radius: var(--radius-sm);
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
 }
 
 .history-conversion {
@@ -353,13 +378,13 @@ body {
 
 .history-date {
   color: var(--neutral-500);
-  font-size: 0.6875rem;
+  font-size: 0.65rem; /* Reduced font size */
 }
 
 .footer {
-  margin-top: 16px;
+  margin-top: 12px; /* Reduced margin */
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.7rem; /* Reduced font size */
   color: var(--neutral-500);
 }
 
@@ -401,20 +426,21 @@ body {
 /* Toast notification */
 .toast {
   position: fixed;
-  bottom: 16px;
+  bottom: 10px; /* Adjusted position */
   left: 50%;
   transform: translateX(-50%);
   background-color: var(--neutral-800);
   color: white;
-  padding: 8px 16px;
+  padding: 7px 14px; /* Reduced padding */
   border-radius: var(--radius-sm);
-  font-size: 0.875rem;
+  font-size: 0.8rem; /* Reduced font size */
   box-shadow: var(--shadow-md);
   z-index: 1000;
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.3s ease, bottom 0.3s ease; /* Added bottom transition */
 }
 
 .toast.show {
   opacity: 1;
+  bottom: 12px; /* Adjusted show position */
 }
