@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCV Dollar Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/css/styles.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-currency-dollar"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h1>BCV Dollar Calculator</h1>
+      </div>
+    </div>
+    
+    <!-- Rate Card -->
+    <div class="rate-card">
+      <div class="rate-header">
+        <span class="rate-title">Current BCV Rate</span>
+        <div class="rate-change" id="rateChange">
+          <span id="rateChangeIcon"></span>
+          <span id="rateChangeValue"></span>
+        </div>
+      </div>
+      <div class="rate-value" id="currentRateValue">Loading...</div>
+      <div class="previous-rate" id="previousRateValue">Previous: Loading...</div>
+      <div class="last-updated" id="lastUpdated">Fetching latest rates...</div>
+    </div>
+    
+    <!-- Calculator Card -->
+    <div class="calculator-card">
+      <!-- From Input -->
+      <div class="input-group" id="fromGroup">
+        <label class="input-label" id="fromLabel">USD Amount</label>
+        <div class="input-wrapper">
+          <span class="currency-symbol" id="fromSymbol">$</span>
+          <input type="text" id="fromInput" placeholder="Enter amount">
+          <button class="convert-btn" id="convertButton">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="M6 17h12"/></svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Swap Button -->
+      <button class="swap-btn" id="swapButton">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 16 4 4 4-4"/><path d="M7 20V4"/><path d="m21 8-4-4-4 4"/><path d="M17 4v16"/></svg>
+      </button>
+      
+      <!-- To Input -->
+      <div class="input-group hidden" id="toGroup">
+        <label class="input-label" id="toLabel">Bs Amount</label>
+        <div class="input-wrapper">
+          <span class="currency-symbol" id="toSymbol">Bs.</span>
+          <input type="text" id="toInput" placeholder="Enter amount">
+          <button class="convert-btn" id="convertButtonBs">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m13 17 5-5-5-5"/><path d="M6 17h12"/></svg>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Result Card -->
+      <div class="result-card" id="resultCard" style="display: none;">
+        <div class="result-label">Conversion Result</div>
+        <div class="result-value">
+          <span id="resultValue"></span>
+          <button class="copy-btn" id="copyButton">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- History Section -->
+    <div class="history-section">
+      <div class="history-header">
+        <h2 class="history-title">Recent Conversions</h2>
+        <button class="clear-btn" id="clearHistoryButton">Clear All</button>
+      </div>
+      <div class="history-list" id="historyList">
+        <!-- History items will be inserted here -->
+      </div>
+    </div>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <p>Data provided by BCV (Venezuelan Central Bank)</p>
+    </div>
+  </div>
+  
+  <script type="module" src="popup.js"></script>
+</body>
+</html>
