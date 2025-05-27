@@ -94,23 +94,19 @@ export function initializeUI() {
   setupEventListeners();
   loadDataFromStorageOrFetch(); // Load from storage first
 
-  /**
-   * Listener for `chrome.storage.onChanged` event.
-   * If the exchange rate data stored under `RATE_DATA_KEY` changes,
-   * this updates the popup's state and re-renders the rate data section.
-   * @param {object} changes - Object describing the changes.
-   * @param {string} namespace - The storage area ('local', 'sync', or 'managed') where the changes occurred.
-   */
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace === 'local' && changes[RATE_DATA_KEY]) {
-      const newStoredData = changes[RATE_DATA_KEY].newValue;
-      if (newStoredData) {
-        console.log('Popup: Detected rate data change in storage, updating UI.');
-        updateStateWithRateData(newStoredData, true); // Mark as cached
-        renderRateData(); // Re-render rate specific parts
+  // Defensive check for chrome.storage and chrome.storage.onChanged
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.onChanged) {
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace === 'local' && changes[RATE_DATA_KEY]) {
+        const newStoredData = changes[RATE_DATA_KEY].newValue;
+        if (newStoredData) {
+          console.log('Popup: Detected rate data change in storage, updating UI.');
+          updateStateWithRateData(newStoredData, true); // Mark as cached
+          renderRateData(); // Re-render rate specific parts
+        }
       }
-    }
-  });
+    });
+  }
 }
 
 /**
@@ -219,17 +215,22 @@ function updateStateWithRateData(rateData, isCached = false) {
  */
 async function loadDataFromStorageOrFetch() {
   showLoadingState('Loading from cache...');
-  chrome.storage.local.get([RATE_DATA_KEY], async (result) => {
-    const storedData = result[RATE_DATA_KEY];
-    if (storedData && storedData.currentRate !== undefined) { // Check currentRate for validity
-      console.log('Popup: Found data in storage:', storedData);
-      updateStateWithRateData(storedData, true);
-      renderUI(); 
-    } else {
-      console.log('Popup: No valid data in storage, fetching live data...');
-      await loadData(true); // true for live fetch
-    }
-  });
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    chrome.storage.local.get([RATE_DATA_KEY], async (result) => {
+      const storedData = result[RATE_DATA_KEY];
+      if (storedData && storedData.currentRate !== undefined) { // Check currentRate for validity
+        console.log('Popup: Found data in storage:', storedData);
+        updateStateWithRateData(storedData, true);
+        renderUI(); 
+      } else {
+        console.log('Popup: No valid data in storage, fetching live data...');
+        await loadData(true); // true for live fetch
+      }
+    });
+  } else {
+    console.error('chrome.storage.local is not available.');
+    showErrorState(new Error('Storage API not available.'));
+  }
 }
 
 
@@ -258,8 +259,12 @@ async function loadData(forceLiveFetch = false) {
       ...rateData,
       lastFetchedByBackground: new Date().toISOString() 
     };
-    await chrome.storage.local.set({ [RATE_DATA_KEY]: dataToStore });
-    console.log('Popup: Live data fetched and stored:', dataToStore);
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      await chrome.storage.local.set({ [RATE_DATA_KEY]: dataToStore });
+      console.log('Popup: Live data fetched and stored:', dataToStore);
+    } else {
+      console.error('chrome.storage.local is not available.');
+    }
 
     updateStateWithRateData(dataToStore, false); // Not cached, it's live
     renderUI(); 
@@ -268,15 +273,17 @@ async function loadData(forceLiveFetch = false) {
     console.error('Error loading live data:', error);
     showErrorState(error); // Display error state in UI
     // Attempt to display cached data as a fallback
-    chrome.storage.local.get([RATE_DATA_KEY], (result) => {
-      const storedData = result[RATE_DATA_KEY];
-      if (storedData && storedData.currentRate !== undefined) {
-        console.log('Popup: Live fetch failed, rendering stored data as fallback:', storedData);
-        updateStateWithRateData(storedData, true);
-        renderUI();
-        showToast("Live fetch failed. Displaying cached data.", 4000);
-      }
-    });
+    if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+      chrome.storage.local.get([RATE_DATA_KEY], (result) => {
+        const storedData = result[RATE_DATA_KEY];
+        if (storedData && storedData.currentRate !== undefined) {
+          console.log('Popup: Live fetch failed, rendering stored data as fallback:', storedData);
+          updateStateWithRateData(storedData, true);
+          renderUI();
+          showToast("Live fetch failed. Displaying cached data.", 4000);
+        }
+      });
+    }
   }
 }
 
