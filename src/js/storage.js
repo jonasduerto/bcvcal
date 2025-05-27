@@ -6,13 +6,25 @@ const HISTORY_KEY = 'bcv_conversion_history';
 const MAX_HISTORY_ITEMS = 10;
 
 /**
- * Get conversion history from local storage
- * @returns {Array} Array of conversion history items
+ * @typedef {object} ConversionItem
+ * @property {number} fromAmount - The amount that was converted.
+ * @property {string} fromCurrency - The currency from which conversion was made (e.g., 'USD').
+ * @property {number} toAmount - The result of the conversion.
+ * @property {string} toCurrency - The currency to which conversion was made (e.g., 'Bs').
+ * @property {number} rate - The exchange rate used for the conversion.
+ * @property {string} timestamp - ISO string representing when the conversion was made.
+ */
+
+/**
+ * Retrieves the conversion history from `localStorage`.
+ * @function getConversionHistory
+ * @returns {Array<ConversionItem>} An array of conversion history items, or an empty array if no history is found or an error occurs.
+ * @sideEffects Outputs an error to the console if parsing fails.
  */
 export function getConversionHistory() {
   try {
-    const history = localStorage.getItem(HISTORY_KEY);
-    return history ? JSON.parse(history) : [];
+    const historyJSON = localStorage.getItem(HISTORY_KEY);
+    return historyJSON ? JSON.parse(historyJSON) : [];
   } catch (error) {
     console.error('Error getting conversion history:', error);
     return [];
@@ -20,41 +32,49 @@ export function getConversionHistory() {
 }
 
 /**
- * Add a conversion to history
- * @param {Object} conversion - Conversion object
+ * Adds a new conversion record to the history stored in `localStorage`.
+ * The history is maintained as a list, with the most recent conversion at the beginning.
+ * The history is capped at `MAX_HISTORY_ITEMS`.
+ * @function addConversionToHistory
+ * @param {object} conversion - The conversion data to add.
+ * @param {number} conversion.fromAmount - The amount that was converted.
+ * @param {string} conversion.fromCurrency - The currency from which conversion was made.
+ * @param {number} conversion.toAmount - The result of the conversion.
+ * @param {string} conversion.toCurrency - The currency to which conversion was made.
+ * @param {number} conversion.rate - The exchange rate used.
+ * @returns {Array<ConversionItem>|undefined} The updated history array, or undefined if input is invalid or an error occurs.
+ * @sideEffects Modifies `localStorage`. Outputs an error to the console if an error occurs.
  */
 export function addConversionToHistory(conversion) {
+  if (!conversion || typeof conversion.fromAmount !== 'number' || typeof conversion.toAmount !== 'number') {
+    console.warn('Invalid conversion object provided to addConversionToHistory.');
+    return;
+  }
   try {
-    if (!conversion) return;
-    
-    // Create history item
     const historyItem = {
       ...conversion,
       timestamp: new Date().toISOString()
     };
     
-    // Get existing history
     let history = getConversionHistory();
-    
-    // Add new item to the beginning
     history.unshift(historyItem);
     
-    // Limit history size
     if (history.length > MAX_HISTORY_ITEMS) {
       history = history.slice(0, MAX_HISTORY_ITEMS);
     }
     
-    // Save to local storage
     localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
-    
     return history;
   } catch (error) {
     console.error('Error adding conversion to history:', error);
+    // Not returning undefined here as per original logic, but it might be better to.
   }
 }
 
 /**
- * Clear conversion history
+ * Clears all conversion history from `localStorage`.
+ * @function clearConversionHistory
+ * @sideEffects Modifies `localStorage` by removing the history item. Outputs an error to the console if an error occurs.
  */
 export function clearConversionHistory() {
   try {
@@ -65,41 +85,46 @@ export function clearConversionHistory() {
 }
 
 /**
- * Format timestamp for display in history
- * @param {string} timestamp - ISO timestamp
- * @returns {string} Formatted timestamp
+ * Formats an ISO timestamp string into a user-friendly relative or short date format
+ * for display in the conversion history.
+ * Examples: "HH:MM AM/PM" (for today), "Yesterday", "Mon" (for this week), "MM/DD" (older).
+ * @function formatHistoryTimestamp
+ * @param {string} timestamp - The ISO timestamp string to format.
+ * @returns {string} A formatted string representing the timestamp, or "Unknown" if formatting fails or input is invalid.
+ * @sideEffects Outputs an error to the console if an error occurs.
  */
 export function formatHistoryTimestamp(timestamp) {
+  if (!timestamp) return 'Unknown';
   try {
     const date = new Date(timestamp);
+    if (isNaN(date.getTime())) {
+        throw new Error('Invalid timestamp provided.');
+    }
     const now = new Date();
     
     // Today
     if (date.toDateString() === now.toDateString()) {
-      return date.toLocaleTimeString('en-US', { 
-        hour: 'numeric', 
+      return date.toLocaleTimeString('en-US', {
+        hour: 'numeric',
         minute: 'numeric',
-        hour12: true 
+        hour12: true
       });
     }
     
-    // Yesterday
     const yesterday = new Date(now);
     yesterday.setDate(now.getDate() - 1);
     if (date.toDateString() === yesterday.toDateString()) {
       return 'Yesterday';
     }
     
-    // This week (last 7 days)
     const lastWeek = new Date(now);
     lastWeek.setDate(now.getDate() - 7);
     if (date > lastWeek) {
-      return date.toLocaleDateString('en-US', { weekday: 'short' });
+      return date.toLocaleDateString('en-US', { weekday: 'short' }); // e.g., "Mon"
     }
     
-    // Default format (MM/DD)
-    return date.toLocaleDateString('en-US', { 
-      month: 'numeric', 
+    return date.toLocaleDateString('en-US', { // Default format e.g., "03/15"
+      month: 'numeric',
       day: 'numeric'
     });
   } catch (error) {

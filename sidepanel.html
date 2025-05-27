@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BCV Dollar - Side Panel</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/css/styles.css">
+  <style>
+    /* Specific styles for sidepanel if needed - for now, making it look like the rate card */
+    body {
+      padding: 0; /* Remove default body padding if styles.css has it for popup body */
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center; /* Center content vertically */
+      align-items: center; /* Center content horizontally */
+      background-color: var(--neutral-50); /* Match popup background */
+    }
+    .container {
+      width: 90%; /* Use most of the panel width */
+      max-width: 300px; /* Max width like popup */
+      gap: 12px; /* Consistent gap */
+      padding: 12px; /* Add some padding around the content */
+      box-sizing: border-box;
+    }
+    /* Ensure rate card takes full width available in this context */
+    .rate-card {
+      width: 100%;
+      box-shadow: var(--shadow-md); /* Make it a bit more prominent */
+    }
+    .header, .calculator-card, .history-section, .footer {
+        display: none; /* Hide elements not needed for side panel display */
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Rate Card -->
+    <div class="rate-card">
+      <div class="rate-header">
+        <span class="rate-title">Current BCV Rate</span>
+        <div class="rate-change" id="sidePanelRateChange">
+          <span id="sidePanelRateChangeIcon"></span>
+          <span id="sidePanelRateChangeValue"></span>
+        </div>
+      </div>
+      <div class="rate-value" id="sidePanelCurrentRateValue">Loading...</div>
+      <div class="previous-rate" id="sidePanelPreviousRateValue">Previous: Loading...</div>
+      <div class="last-updated" id="sidePanelLastUpdated">Fetching latest rates...</div>
+    </div>
+  </div>
+  <script type="module" src="sidepanel.js"></script>
+</body>
+</html>
