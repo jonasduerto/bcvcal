@@ -12,7 +12,7 @@
       "128": "icons/icon128.png"
     }
   },
-  "permissions": ["sidePanel", "https://pydolarve.org/"],
+  "permissions": ["sidePanel", "storage", "https://pydolarve.org/"],
   "background": {
     "service_worker": "background.js"
   },
